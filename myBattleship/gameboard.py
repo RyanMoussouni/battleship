@@ -11,13 +11,18 @@ class Gameboard:
         self.sunkShips = []
         self.hits = set()
         self.gameOver = False
+
+        self.add_random_ship(5)
+        self.add_random_ship(5)
+        self.add_random_ship(3)
+        self.add_random_ship(3)
         pass
 
     def add_ship(self, ship: Ship)->None:
         '''if possible, adds a ship to the grid'''
         grid = self.grid
 
-        if ship.prow in self.possible_cells(ship.length, ship.orientation):
+        if ship.prow in self._possible_cells(ship.length, ship.orientation):
             try:
                 for idx in ship.position:
                     grid[idx] = True
@@ -34,11 +39,11 @@ class Gameboard:
             raise Exception("{} cannot be put in the grid".format(ship.__str__()))
         pass
     
-    def add_random_ship(self,length:int)-> None:
+    def add_random_ship(self, length:int)-> None:
         ''' adds a ship of random prow & orientation to the gameboard'''
         # -- randomizing the ship
         orientation = rd.randint(2)
-        possibleCells = self.possible_cells(length, orientation)
+        possibleCells = self._possible_cells(length, orientation)
         # taking random possible cell as a prow
         if len(possibleCells) == 0:
             raise ValueError('No ship can be placed anymore')
@@ -49,7 +54,7 @@ class Gameboard:
         self.add_ship(ship)
         pass
 
-    def hit(self,cell:tuple)->bool:
+    def hit(self, cell:tuple)->bool:
         '''hits a cell of the grid'''
         grid = self.grid
         try:
@@ -58,8 +63,8 @@ class Gameboard:
                 self.hits.add(cell)
                 self.grid = grid
                 print("It's a hit !")
-                self.refresh_ships()
-                self.set_gameOver()
+                self._refresh_ships()
+                self._set_gameOver()
                 return True
             else:
                 print("In the water ...")
@@ -72,8 +77,8 @@ class Gameboard:
             raise
         pass
 
-    def refresh_ships(self)-> None:
-        '''called by hit method. Checks if the hit did blow a ship'''
+    def _refresh_ships(self)-> None:
+        '''Checks if the hit did blow a ship'''
         ships = self.ships
         idxSunk = []
 
@@ -89,8 +94,8 @@ class Gameboard:
         self.ships = ships
         return
 
-    def set_gameOver(self)-> None:
-        '''called by hit method. Checks if the game is over'''
+    def _set_gameOver(self)-> None:
+        '''Checks if the game is over'''
         if len(self.ships) == 0 and len(self.sunkShips) > 0:
             self.gameOver = True
             print('Game over, well played !')
@@ -100,7 +105,7 @@ class Gameboard:
             print('#################')
         pass
 
-    def possible_cells(self,length:int,orientation:bool)->set:
+    def _possible_cells(self, length:int, orientation:bool)->set:
         '''
         Description.
             a possible cell is a cell that could be the prow of the ship.
