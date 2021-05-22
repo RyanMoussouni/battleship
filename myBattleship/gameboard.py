@@ -137,7 +137,8 @@ class Gameboard:
 
 def main():
     gameboard = Gameboard()
-    gameboard.add_ship(Ship(length=5,orientation=0,prow =(9,9)))
+    gameboard.add_ship(Ship(length=5, orientation=0, prow =(3,3)))
+    print(gameboard.grid.astype(np.uint8))
     pass
 
 if __name__ == '__main__':
