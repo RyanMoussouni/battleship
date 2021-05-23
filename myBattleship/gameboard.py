@@ -12,46 +12,10 @@ class Gameboard:
         self.hits = set()
         self.gameOver = False
 
-        self.add_random_ship(5)
-        self.add_random_ship(5)
-        self.add_random_ship(3)
-        self.add_random_ship(3)
-        pass
-
-    def add_ship(self, ship: Ship)->None:
-        '''if possible, adds a ship to the grid'''
-        grid = self.grid
-
-        if ship.prow in self._possible_cells(ship.length, ship.orientation):
-            try:
-                for idx in ship.position:
-                    grid[idx] = True
-            except IndexError:
-                print("Error")
-                print("{} doesn't fit in the grid".format(ship.__str__()))
-            except:
-                print("Unexpected Error happened while adding {}".format(ship.__str__()))
-                raise
-
-            self.grid = grid
-            self.ships.append(ship)
-        else:
-            raise Exception("{} cannot be put in the grid".format(ship.__str__()))
-        pass
-    
-    def add_random_ship(self, length:int)-> None:
-        ''' adds a ship of random prow & orientation to the gameboard'''
-        # -- randomizing the ship
-        orientation = rd.randint(2)
-        possibleCells = self._possible_cells(length, orientation)
-        # taking random possible cell as a prow
-        if len(possibleCells) == 0:
-            raise ValueError('No ship can be placed anymore')
-        prow = list(possibleCells)[rd.randint(len(possibleCells))]
-        
-        # -- adding the ship to the gameboard
-        ship = Ship(length=length, orientation=orientation, prow=prow)
-        self.add_ship(ship)
+        self._add_random_ship(5)
+        self._add_random_ship(5)
+        self._add_random_ship(3)
+        self._add_random_ship(3)
         pass
 
     def hit(self, cell:tuple)->bool:
@@ -77,6 +41,48 @@ class Gameboard:
             raise
         pass
 
+    def _add_ship(self, ship: Ship)->None:
+        '''if possible, adds a ship to the grid'''
+        grid = self.grid
+
+        if ship.prow in self._possible_cells(ship.length, ship.orientation):
+            try:
+                for idx in ship.position:
+                    grid[idx] = True
+
+            except IndexError:
+                print("Error")
+                print("{} doesn't fit in the grid".format(ship.__str__()))
+
+            except:
+                print("Unexpected Error happened while adding {}".format(ship.__str__()))
+                raise
+
+            self.grid = grid
+            self.ships.append(ship)
+
+        else:
+            raise Exception("{} cannot be put in the grid".format(ship.__str__()))
+        pass
+    
+    def _add_random_ship(self, length:int)-> None:
+        ''' adds a ship of random prow & orientation to the gameboard'''
+        # take a ship at random
+
+        orientation = rd.randint(2)
+        possibleCells = self._possible_cells(length, orientation)
+
+        if len(possibleCells) == 0:
+            raise ValueError('No ship can be placed anymore')
+
+        prow = list(possibleCells)[rd.randint(len(possibleCells))]
+
+        # add the ship to the gameboard
+
+        ship = Ship(length=length, orientation=orientation, prow=prow)
+        self.add_ship(ship)
+        pass
+
     def _refresh_ships(self)-> None:
         '''Checks if the hit did blow a ship'''
         ships = self.ships
@@ -88,6 +94,7 @@ class Gameboard:
         if len(idxSunk)==1:
             sunkShip = ships.pop(idxSunk[-1])
             self.sunkShips.append(sunkShip)
+            print("A ship has been sunk !")
         elif len(idxSunk) > 1:
             raise ValueError("Multiple ships sunk by a single hit")
 
