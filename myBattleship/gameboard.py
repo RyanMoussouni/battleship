@@ -80,7 +80,7 @@ class Gameboard:
         # add the ship to the gameboard
 
         ship = Ship(length=length, orientation=orientation, prow=prow)
-        self.add_ship(ship)
+        self._add_ship(ship)
         pass
 
     def _refresh_ships(self)-> None:
